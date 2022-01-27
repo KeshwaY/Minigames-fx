@@ -1,0 +1,25 @@
+
+        <?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.scene.control.Button?>
+        <?import javafx.scene.control.Label?>
+        <?import javafx.scene.control.PasswordField?>
+        <?import javafx.scene.control.TextField?>
+        <?import javafx.scene.layout.AnchorPane?>
+        <?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projekt.GUI.RegisterController">
+    <children>
+        <TextField fx:id="username" layoutX="226.0" layoutY="112.0" prefHeight="33.0" prefWidth="149.0" promptText="Username" />
+        <PasswordField fx:id="password" layoutX="226.0" layoutY="152.0" prefHeight="33.0" prefWidth="149.0" promptText="Password" />
+        <PasswordField fx:id="confirmedPassword" layoutX="226.0" layoutY="192.0" prefHeight="33.0" prefWidth="149.0" promptText="Confirm passowrd" />
+        <Button fx:id="registerButton" layoutX="227.0" layoutY="256.0" mnemonicParsing="false" onAction="#register" prefHeight="42.0" prefWidth="147.0" text="Register" />
+        <Button fx:id="loginViewButton" layoutX="27.0" layoutY="350.0" mnemonicParsing="false" onAction="#loginView" text="Back to login" />
+        <Label alignment="CENTER" layoutX="227.0" layoutY="35.0" prefHeight="59.0" prefWidth="147.0" text="Register">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <Label fx:id="notValid" layoutX="171.0" layoutY="225.0" prefHeight="25.0" prefWidth="265.0" textFill="#eb0b0b" />
+    </children>
+</AnchorPane>

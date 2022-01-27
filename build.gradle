@@ -1,5 +1,14 @@
+gradle:
+
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+}
+
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls' , 'javafx.fxml']
 }
 
 group 'org.pwj'
@@ -16,4 +25,15 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs= ["src/main/java"]
+        }
+        resources {
+            srcDirs= ["src/main/resources"]
+        }
+    }
 }
