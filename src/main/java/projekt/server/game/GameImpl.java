@@ -1,19 +1,32 @@
 package projekt.server.game;
 
 import projekt.server.client.Client;
-import projekt.server.dto.ClientScore;
+import projekt.server.dto.ClientDto;
+import projekt.server.dto.GameResult;
+import projekt.server.game.abstraction.Game;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
-public class GameImpl implements Callable<ClientScore>, Serializable {
+public class GameImpl implements Game {
 
+    private int id;
     private Client firstPlayer;
     private Client secondPlayer;
     private LocalDateTime timeCreated;
 
     public GameImpl() {}
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Client getFirstPlayer() {
         return firstPlayer;
@@ -40,7 +53,23 @@ public class GameImpl implements Callable<ClientScore>, Serializable {
     }
 
     @Override
-    public ClientScore call() throws Exception {
-        return null;
+    public void addPlayer(Client client) {
+        setSecondPlayer(client);
     }
+
+    @Override
+    public GameResult start() {
+        GameResult gameResult = new GameResult();
+        List<Client> clientList = new ArrayList<>();
+        clientList.add(firstPlayer);
+        clientList.add(secondPlayer);
+        Collections.shuffle(clientList, new Random());
+        gameResult.setGameId(id);
+        gameResult.setFirstPlayer(new ClientDto());
+        gameResult.setSecondPlayer(new ClientDto());
+        gameResult.setTimeCreated(timeCreated);
+        gameResult.setTimeFinished(LocalDateTime.now());
+        return gameResult;
+    }
+
 }

@@ -1,19 +1,89 @@
 package projekt.server.game;
 
 import projekt.server.client.Client;
+import projekt.server.dto.GameResult;
 import projekt.server.game.abstraction.Game;
 import projekt.server.game.abstraction.Lobby;
 
-import java.io.Serializable;
+import java.util.function.BiConsumer;
 
-public class LobbyImpl implements Lobby, Serializable {
+public class LobbyImpl implements Lobby {
 
-    private Game game;
+    private int id;
+
     private Client ownerPlayer;
     private Client secondPlayer;
+    private GameType gameType;
+    private String description;
 
-    public LobbyImpl(Client ownerPlayer) {
+    private boolean start;
+    private Game game;
+
+    private BiConsumer<Integer, Lobby> deleteLobbyFunction;
+
+    public LobbyImpl(int id, Client ownerPlayer, GameType gameType, String description, Game game, BiConsumer<Integer, Lobby> deleteLobbyFunction) {
+        this.id = id;
         this.ownerPlayer = ownerPlayer;
+        this.gameType = gameType;
+        this.description = description;
+        this.game = game;
+        this.deleteLobbyFunction = deleteLobbyFunction;
+        this.start = false;
+    }
+
+    @Override
+    public Client getOwner() {
+        return getOwnerPlayer();
+    }
+
+    @Override
+    public int getCurrentSize() {
+        return secondPlayer == null ? 1 : 2;
+    }
+
+    @Override
+    public int getMaxSize() {
+        return gameType.getLobbySize();
+    }
+
+    @Override
+    public void addPlayer(Client client) {
+        if (secondPlayer != null) {
+            return;
+        }
+        secondPlayer = client;
+        game.addPlayer(client);
+    }
+
+    @Override
+    public void changeDescription(String newDescription) {
+        description = newDescription;
+    }
+
+    @Override
+    public void startGame() {
+        this.start = true;
+    }
+
+    @Override
+    public void delete() {
+        this.deleteLobbyFunction.accept(id, this);
+    }
+
+    @Override
+    public GameResult call() throws Exception {
+        while (!start) {
+            Thread.sleep(1000);
+        }
+        return game.start();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Client getOwnerPlayer() {
@@ -32,6 +102,24 @@ public class LobbyImpl implements Lobby, Serializable {
         this.secondPlayer = secondPlayer;
     }
 
+    @Override
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Game getGame() {
         return game;
     }
@@ -40,17 +128,4 @@ public class LobbyImpl implements Lobby, Serializable {
         this.game = game;
     }
 
-    @Override
-    public boolean addPlayer(Client client) {
-        return false;
-    }
-
-    @Override
-    public boolean changeDescription(String newDescription) {
-        return false;
-    }
-
-    @Override
-    public void startGame() {
-    }
 }

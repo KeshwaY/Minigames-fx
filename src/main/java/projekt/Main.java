@@ -3,9 +3,13 @@ package projekt;
 import projekt.client.Client;
 import projekt.server.core.ServerImpl;
 import projekt.server.core.ThreadManagerImpl;
+import projekt.server.game.GameCreatorImpl;
+import projekt.server.game.LobbyManagerImpl;
+import projekt.server.game.abstraction.LobbyManager;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -23,8 +27,9 @@ public class Main {
         String startType = posOfStartFlag.get() >= 0 ? args[posOfStartFlag.get() + 1].toLowerCase(Locale.ROOT) : "client";
         if (startType.equals("server")) {
             try {
-                ThreadManagerImpl threadManager = new ThreadManagerImpl(1);
-                ServerImpl serverImpl = new ServerImpl(8080, threadManager);
+                ThreadManagerImpl threadManager = new ThreadManagerImpl(2);
+                LobbyManager lobbyManager = new LobbyManagerImpl(new ConcurrentHashMap<>(), new GameCreatorImpl());
+                ServerImpl serverImpl = new ServerImpl(8080, threadManager, lobbyManager);
                 serverImpl.start();
             } catch (IOException e) {
                 e.printStackTrace();

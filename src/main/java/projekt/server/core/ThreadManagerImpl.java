@@ -1,13 +1,12 @@
 package projekt.server.core;
 
 import projekt.server.client.Client;
-import projekt.server.core.abstraction.ThreadManager;
-import projekt.server.game.abstraction.Lobby;
+import projekt.server.core.abstraction.ClientThreadManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ThreadManagerImpl implements ThreadManager {
+public class ThreadManagerImpl implements ClientThreadManager {
 
     private final ExecutorService executor;
 
@@ -16,12 +15,7 @@ public class ThreadManagerImpl implements ThreadManager {
     }
 
     @Override
-    public void startLobbyThread(Lobby lobby) {
-
-    }
-
-    @Override
     public void startClientThread(Client client) {
-
+        executor.submit(client);
     }
 }

@@ -1,5 +1,11 @@
 package projekt.server.game.abstraction;
 
-public interface Game {
-    void start();
+import projekt.server.client.Client;
+import projekt.server.dto.GameResult;
+
+import java.io.Serializable;
+
+public interface Game extends Serializable {
+    GameResult start();
+    void addPlayer(Client client);
 }
