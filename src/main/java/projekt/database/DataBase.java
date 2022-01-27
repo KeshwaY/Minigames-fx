@@ -8,10 +8,10 @@ public interface DataBase {
 
     boolean execute(String sql) throws SQLException;
     ResultSet executeQuery(String sql) throws SQLException;
-    boolean checkIfPlayerExists(String playerId) throws SQLException;
+    ResultSet getPlayer(String username) throws SQLException;
 
-    boolean addPlayer(String id, String name) throws SQLException;
+    boolean addPlayer(String name, String password) throws SQLException;
 
-    boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException;
+   // boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException;
 
 }

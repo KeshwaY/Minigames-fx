@@ -1,6 +1,10 @@
 package projekt.database;
 
+import projekt.server.client.Client;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBaseImpl implements DataBase{
 
@@ -24,7 +28,7 @@ public class DataBaseImpl implements DataBase{
 
     private void createPlayerTable() throws SQLException {
         execute("CREATE TABLE IF NOT EXISTS players ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " username VARCHAR(40) NOT NULL)");
+                " username VARCHAR(40) NOT NULL), password VARCHAR(40) NOT NULL");
     }
 
     private void createResultTable() throws SQLException {
@@ -53,18 +57,18 @@ public class DataBaseImpl implements DataBase{
     }
 
     @Override
-    public boolean checkIfPlayerExists(String playerId) throws SQLException {
-        return checkForValue("SELECT * FROM players WHERE ID = " + playerId);
+    public ResultSet getPlayer(String username) throws SQLException {
+        return executeQuery("SELECT * FROM players WHERE username = " + username);
     }
 
     @Override
-    public boolean addPlayer(String id, String name) throws SQLException {
-        return execute(String.format("INSERT INTO players(ID, username) VALUES ('%s', '%s')", id, name));
+    public boolean addPlayer(String name, String password) throws SQLException {
+        return execute(String.format("INSERT INTO players(username, password) VALUES ('%s', '%s')", name, password));
     }
 
-    @Override
-    public boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException{
-        //TODO: need some validation/logic here for answer (choice) and set the winner
-        return execute(String.format("INSERT INTO results(playerID, gameID, -----) VALUES ('%s', %s, %s)", playerId, gameId, //TODO: WHO IS THE WINNER?"));
-    }
+//    @Override
+//    public boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException{
+//        //TODO: need some validation/logic here for answer (choice) and set the winner
+//        return execute(String.format("INSERT INTO results(playerID, gameID, -----) VALUES ('%s', %s, %s)", playerId, gameId, //TODO: WHO IS THE WINNER?"));
+//    }
 }
