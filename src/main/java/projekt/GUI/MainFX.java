@@ -10,7 +10,6 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage stage) {
-
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Scene scene = new Scene(root);
@@ -19,7 +18,6 @@ public class MainFX extends Application {
         }catch (Exception e){
             e.printStackTrace();
         }
-
 
     }
 

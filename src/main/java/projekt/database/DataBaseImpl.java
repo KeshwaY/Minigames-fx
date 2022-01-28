@@ -13,6 +13,7 @@ public class DataBaseImpl implements DataBase{
     public DataBaseImpl(String host, String user, String password) throws SQLException {
         this.connection = DriverManager.getConnection(host, user, password);
         createDatabase();
+        createTables();
     }
 
     private void createDatabase() throws SQLException {

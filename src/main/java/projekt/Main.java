@@ -1,5 +1,6 @@
 package projekt;
 
+import projekt.GUI.MainFX;
 import projekt.client.Client;
 import projekt.server.core.ServerImpl;
 import projekt.server.core.ThreadManagerImpl;
@@ -16,6 +17,8 @@ import java.util.stream.IntStream;
 public class Main {
 
     public static void main(String[] args) {
+
+
 
         AtomicInteger posOfStartFlag = new AtomicInteger(-1);
         IntStream.range(0, args.length).boxed()
@@ -37,7 +40,8 @@ public class Main {
         } else {
             try {
                 Client client = new Client("localhost", 8080);
-                client.test();
+               // client.test();
+                MainFX.main(args);
             } catch (IOException e) {
                 e.printStackTrace();
             }
