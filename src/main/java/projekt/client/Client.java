@@ -64,6 +64,10 @@ public class Client {
         return username;
     }
 
+    public void relog() throws IOException {
+        socket.close();
+    }
+
 //    public void test() throws IOException {
 //        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 //        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());

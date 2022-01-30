@@ -52,10 +52,13 @@ public class RegisterController {
 
         // check if exists
         if(!registerResponseDto.getSuccess()) {
-            notValid.setText("Username in use!");
-        } else {
-            //if(!register(name, pwd))
             notValid.setText("Error. Something goes wrong!");
+        } else{
+            Parent root = FXMLLoader.load(getClass().getResource("/GUI/Menu.fxml"));
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         }
     }
 

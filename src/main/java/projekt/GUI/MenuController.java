@@ -47,6 +47,9 @@ public class MenuController{
     }
 
     public void logout(ActionEvent actionEvent) throws IOException {
+
+
+            MainFX.client.relog();
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
@@ -56,6 +59,7 @@ public class MenuController{
 
     public void exit(ActionEvent actionEvent) {
         Stage stage = (Stage) exit.getScene().getWindow();
+
         stage.close();
     }
 }

@@ -13,14 +13,6 @@ import java.io.IOException;
 public class MainFX extends Application {
 
     public static Client client;
-    static {
-        try {
-            client = new Client("localhost", 8080);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Could not connect to the server!");
-        }
-    }
 
     @Override
     public void start(Stage stage) {

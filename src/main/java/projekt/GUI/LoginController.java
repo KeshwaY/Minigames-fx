@@ -17,6 +17,16 @@ import java.io.IOException;
 
 
 public class LoginController {
+
+    public LoginController() {
+        try {
+            MainFX.client = new Client("localhost", 8080);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not connect to the server!");
+        }
+    }
+
     @FXML
     private TextField username;
 
@@ -27,6 +37,8 @@ public class LoginController {
     private Label notValid;
 
     public void login(ActionEvent actionEvent) throws IOException {
+
+
         String name = username.getText();
         String pwd = password.getText();
         // after
