@@ -18,8 +18,10 @@ import projekt.model.User;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class RankController implements Initializable {
@@ -46,6 +48,9 @@ public class RankController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        TableColumn<User, String> positionCol = new TableColumn<>("Position");
+        positionCol.setCellValueFactory(new PropertyValueFactory<>("pos"));
+
         TableColumn<User, String> usernameCol = new TableColumn<>("Username");
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("login"));
 
@@ -53,13 +58,19 @@ public class RankController implements Initializable {
         pointsCol.setCellValueFactory(new PropertyValueFactory<>("points"));
 
 
-        tableView.getColumns().add(usernameCol);
-        tableView.getColumns().add(pointsCol);
+        final ObservableList columns = tableView.getColumns();
+        columns.add(positionCol);
+        columns.add(usernameCol);
+        columns.add(pointsCol);
 
-        getUsers().stream().sorted(Comparator.comparingInt(User::getPoints).reversed())
-                .collect(Collectors.toList())
-                .forEach(user  -> tableView.getItems().add(user));
+        List<User> userList = getUsers().stream().sorted(Comparator.comparingInt(User::getPoints).reversed())
+                .collect(Collectors.toList());
 
-
+        IntStream.range(0, userList.size())
+                .forEach(i -> {
+                    User user = userList.get(i);
+                    user.setPos(i + 1);
+                    tableView.getItems().add(user);
+                });
     }
 }

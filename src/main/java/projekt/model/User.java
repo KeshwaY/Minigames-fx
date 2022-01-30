@@ -2,12 +2,14 @@ package projekt.model;
 
 public class User {
     private int id;
+    private int pos;
     private String login;
     private String password;
     private int points;
 
-    public User(int id, String login, String password) {
+    public User(int id, int pos, String login, String password) {
         this.id = id;
+        this.pos = pos;
         this.login = login;
         this.password = password;
     }
@@ -15,6 +17,14 @@ public class User {
     public User(String login,int points) {
         this.points = points;
         this.login = login;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
     }
 
     public int getId() {
