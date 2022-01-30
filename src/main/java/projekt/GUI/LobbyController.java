@@ -17,12 +17,17 @@ import projekt.model.Game;
 import projekt.model.Match;
 import projekt.model.User;
 import projekt.server.dto.ClientDto;
+import projekt.server.dto.LobbiesDto;
 import projekt.server.dto.LobbyDto;
 import projekt.server.game.GameType;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class LobbyController implements Initializable {
 
@@ -33,6 +38,7 @@ public class LobbyController implements Initializable {
     public void join(ActionEvent actionEvent) throws IOException {
 
         LobbyDto selectedLobby = tableView.getSelectionModel().getSelectedItem();
+        MainFX.client.joinGame(selectedLobby.getId());
         if(selectedLobby.getCurrentSize()<selectedLobby.getMaxSize()) {
             //wczytuje okno gry
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/CoinFlip.fxml"));
@@ -74,11 +80,19 @@ public class LobbyController implements Initializable {
         TableColumn<LobbyDto, String> size = new TableColumn<>("Slots");
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("currentSize"));
 
+        final ObservableList columns = tableView.getColumns();
+        columns.add(ownerCol);
+        columns.add(gameTypeCol);
+        columns.add(descriptionCol);
+        columns.add(size);
 
-//        getLobbies().forEach(lobbyDto ->
-//                tableView.getItems().add(lobbyDto)
-//                );
-
+        try {
+            LobbiesDto lobbiesDto = MainFX.client.getLobbies();
+            lobbiesDto.getLobbies().values()
+                    .forEach(l -> tableView.getItems().add(l));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

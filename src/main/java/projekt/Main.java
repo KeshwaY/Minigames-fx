@@ -35,7 +35,7 @@ public class Main {
         if (startType.equals("server")) {
             try {
                 DataBase dataBase = new DataBaseImpl("jdbc:mysql://localhost:3306/","root","");
-                ThreadManagerImpl threadManager = new ThreadManagerImpl(2);
+                ThreadManagerImpl threadManager = new ThreadManagerImpl(4);
                 LobbyManager lobbyManager = new LobbyManagerImpl(dataBase, new ConcurrentHashMap<Integer, Lobby>(), new GameCreatorImpl());
                 ServerImpl serverImpl = new ServerImpl(8080, threadManager, lobbyManager, dataBase);
                 serverImpl.start();

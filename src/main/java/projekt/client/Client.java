@@ -2,6 +2,7 @@ package projekt.client;
 
 import projekt.server.ActionType;
 import projekt.server.dto.*;
+import projekt.server.game.GameType;
 import projekt.server.game.abstraction.Lobby;
 
 import java.io.DataOutputStream;
@@ -54,20 +55,38 @@ public class Client {
         }
     }
 
+    public LobbiesDto getLobbies() throws IOException {
+        sendActionDto(ActionType.GET_LOBBIES);
+        try {
+            return (LobbiesDto) objectInputStream.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void joinGame(int id) throws IOException {
+        sendActionDto(ActionType.JOIN_LOBBY);
+        dataOutputStream.writeUTF(String.valueOf(id));
+    }
+
+    public void createGame(String name, GameType gameType) throws IOException {
+        sendActionDto(ActionType.CREATE_LOBBY);
+    }
+
     public void sendActionDto(ActionType actionType) throws IOException {
         ActionDto actionDto = new ActionDto();
         actionDto.setActionType(actionType);
         objectOutputStream.writeObject(actionDto);
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public void relog() throws IOException {
         socket.close();
     }
 
+    public String getUsername() {
+        return username;
+    }
 //    public void test() throws IOException {
 //        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 //        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
