@@ -8,6 +8,7 @@ import projekt.server.game.GameType;
 import projekt.server.game.abstraction.Lobby;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,13 +102,16 @@ public class Client implements Runnable {
     private void createIdentity() throws IOException, ClassNotFoundException {
         ClientDto dto = connectionManager.getDto();
         try {
-            if (!dataBase.getPlayer(dto.getUsername()).getString("password").equals(dto.getPassword())) {
-                connectionManager.close();
+            ResultSet resultSet = dataBase.getPlayer(dto.getUsername());
+            resultSet.next();
+            String password = resultSet.getString("password");
+            if (!password.equals(dto.getPassword())) {
                 connectionManager.sendDto(new LoginResponseDto(false));
+                connectionManager.close();
             }
         } catch (SQLException e) {
-            connectionManager.close();
             connectionManager.sendDto(new LoginResponseDto(false));
+            connectionManager.close();
         }
         identity = dto;
         connectionManager.sendDto(new LoginResponseDto(true));
@@ -117,17 +121,19 @@ public class Client implements Runnable {
         ClientDto dto = connectionManager.getDto();
         try {
             if (dataBase.getPlayer(dto.getUsername()).getString("username").equals(dto.getUsername())) {
-                connectionManager.close();
                 connectionManager.sendDto(new RegisterResponseDto(false));
-            } else {
-                dataBase.addPlayer(dto.getUsername(), dto.getPassword());
-                connectionManager.sendDto(new RegisterResponseDto(true));
+                connectionManager.close();
             }
         } catch (SQLException e) {
-            connectionManager.close();
-            connectionManager.sendDto(new RegisterResponseDto(false));
+            try {
+                dataBase.addPlayer(dto.getUsername(), dto.getPassword());
+            } catch (SQLException ex) {
+                connectionManager.sendDto(new RegisterResponseDto(false));
+                connectionManager.close();
+            }
         }
         identity = dto;
+        connectionManager.sendDto(new RegisterResponseDto(true));
     }
 
     private ActionDto getActionDto() throws IOException, ClassNotFoundException {

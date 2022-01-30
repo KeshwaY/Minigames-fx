@@ -32,6 +32,7 @@ public class Client {
     }
 
     public LoginResponseDto login(String username, String password) throws IOException {
+        sendActionDto(ActionType.LOGIN_PLAYER);
         ClientDto clientDto = new ClientDto(username, password);
         objectOutputStream.writeObject(clientDto);
         try {
@@ -43,6 +44,7 @@ public class Client {
     }
 
     public RegisterResponseDto register(String username, String password) throws IOException {
+        sendActionDto(ActionType.REGISTER_PLAYER);
         ClientDto clientDto = new ClientDto(username, password);
         objectOutputStream.writeObject(clientDto);
         try {
@@ -50,6 +52,12 @@ public class Client {
         } catch (ClassNotFoundException e) {
             return new RegisterResponseDto(false);
         }
+    }
+
+    public void sendActionDto(ActionType actionType) throws IOException {
+        ActionDto actionDto = new ActionDto();
+        actionDto.setActionType(actionType);
+        objectOutputStream.writeObject(actionDto);
     }
 
     public String getUsername() {

@@ -1,10 +1,6 @@
 package projekt.database;
 
-import projekt.server.client.Client;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataBaseImpl implements DataBase{
 
@@ -56,7 +52,7 @@ public class DataBaseImpl implements DataBase{
 
     @Override
     public ResultSet getPlayer(String username) throws SQLException {
-        return executeQuery("SELECT * FROM players WHERE username = " + username);
+        return executeQuery("SELECT * FROM players WHERE username = '" + username + "'");
     }
 
     @Override

@@ -33,7 +33,7 @@ public class LoginController {
         System.out.println(pwd);
         System.out.println(name);
         LoginResponseDto loginResponseDto = MainFX.client.login(name, pwd);
-
+        System.out.println(loginResponseDto.getSuccess());
         if(!loginResponseDto.getSuccess()) notValid.setText("Incorrect username or password!");
         else {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Menu.fxml"));
