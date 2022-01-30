@@ -28,18 +28,15 @@ public class DataBaseImpl implements DataBase{
     }
 
     private void createPlayerTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS players ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " username VARCHAR(40) NOT NULL), password VARCHAR(40) NOT NULL");
+        execute("CREATE TABLE IF NOT EXISTS players ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, username VARCHAR(40) NOT NULL, password VARCHAR(40) NOT NULL)");
     }
 
     private void createResultTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS results ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " FOREIGN KEY (playerID) REFERENCES players(ID), FOREIGN KEY (gameID) REFERENCES games(ID), winner BOOLEAN)");
+        execute("CREATE TABLE IF NOT EXISTS results ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, playerID INTEGER NOT NULL, gameID INTEGER NOT NULL, FOREIGN KEY (playerID) REFERENCES players(ID), FOREIGN KEY (gameID) REFERENCES games(ID), winner BOOLEAN)");
     }
 
     private void createGameTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS games ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " gameType VARCHAR(50) NOT NULL, created DATE)");
+        execute("CREATE TABLE IF NOT EXISTS games ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, gameType VARCHAR(50) NOT NULL, created DATE)");
     }
 
     private boolean checkForValue(String sql) throws SQLException {

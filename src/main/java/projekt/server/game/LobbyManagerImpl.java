@@ -1,5 +1,6 @@
 package projekt.server.game;
 
+import projekt.database.DataBase;
 import projekt.server.client.Client;
 import projekt.server.game.abstraction.GameCreator;
 import projekt.server.game.abstraction.Lobby;
@@ -10,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LobbyManagerImpl implements LobbyManager {
 
+    private final DataBase dataBase;
     private final ConcurrentHashMap<Integer, Lobby> lobbies;
     private final GameCreator gameCreator;
 
@@ -21,7 +23,8 @@ public class LobbyManagerImpl implements LobbyManager {
 
     private int ids = 0;
 
-    public LobbyManagerImpl(ConcurrentHashMap<Integer, Lobby> lobbies, GameCreator gameCreator) {
+    public LobbyManagerImpl(DataBase dataBase, ConcurrentHashMap<Integer, Lobby> lobbies, GameCreator gameCreator) {
+        this.dataBase = dataBase;
         this.lobbies = lobbies;
         this.gameCreator = gameCreator;
         this.executorService = Executors.newFixedThreadPool(1);

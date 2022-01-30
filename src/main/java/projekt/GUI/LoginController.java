@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import projekt.client.Client;
+import projekt.server.dto.LoginResponseDto;
 
 import java.io.IOException;
 
@@ -27,10 +29,12 @@ public class LoginController {
     public void login(ActionEvent actionEvent) throws IOException {
         String name = username.getText();
         String pwd = password.getText();
+        // after
         System.out.println(pwd);
         System.out.println(name);
+        LoginResponseDto loginResponseDto = MainFX.client.login(name, pwd);
 
-        if(!name.equals("user") && !pwd.equals("user")) notValid.setText("Incorrect username or password!");
+        if(!loginResponseDto.getSuccess()) notValid.setText("Incorrect username or password!");
         else {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Menu.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

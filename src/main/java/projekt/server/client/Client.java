@@ -1,14 +1,14 @@
 package projekt.server.client;
 
+import projekt.database.DataBase;
+import projekt.server.ActionType;
 import projekt.server.client.abstraction.ConnectionManager;
-import projekt.server.dto.ActionDto;
-import projekt.server.dto.ClientDto;
-import projekt.server.dto.LobbiesDto;
-import projekt.server.dto.LobbyDto;
+import projekt.server.dto.*;
 import projekt.server.game.GameType;
 import projekt.server.game.abstraction.Lobby;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,25 +27,34 @@ public class Client implements Runnable {
 
     private ClientDto identity;
 
+    private final DataBase dataBase;
+
     public Client(
             ConnectionManager connectionManager,
             BiFunction<Client, GameType, Lobby> createLobbyFunction,
             BiFunction<Integer, Client, Lobby> joinLobbyFunction,
-            ConcurrentHashMap<Integer, Lobby> lobbies
+            ConcurrentHashMap<Integer, Lobby> lobbies,
+            DataBase database
     ) {
         this.connectionManager = connectionManager;
         this.createLobbyFunction = createLobbyFunction;
         this.joinLobbyFunction = joinLobbyFunction;
         this.lobbies = lobbies;
+        this.dataBase = database;
         isRunning = true;
     }
 
     @Override
     public void run() {
-        try {
-            createIdentity();
+        try {   
+            ActionDto actionDto = getActionDto();
+            if (actionDto.getActionType().equals(ActionType.REGISTER_PLAYER)) {
+                registerIdentity();
+            } else {
+                createIdentity();
+            }
             main: while (true) {
-                ActionDto actionDto = getActionDto();
+                actionDto = getActionDto();
                 System.out.println(actionDto.getActionType());
                 if (lobby == null) {
                     switch (actionDto.getActionType()) {
@@ -74,16 +83,12 @@ public class Client implements Runnable {
                 } else {
                     if (lobby.getOwner() == this) {
                         switch (actionDto.getActionType()) {
-                            case START_GAME:
-                                lobby.startGame();
-                                break;
-                            case CHANGE_DESCRIPTION:
+                            case START_GAME -> lobby.startGame();
+                            case CHANGE_DESCRIPTION -> {
                                 String newDescription = connectionManager.getInput();
                                 lobby.changeDescription(newDescription);
-                                break;
-                            case QUIT:
-                                lobby.delete();
-                                break;
+                            }
+                            case QUIT -> lobby.delete();
                         }
                     }
                 }
@@ -94,7 +99,35 @@ public class Client implements Runnable {
     }
 
     private void createIdentity() throws IOException, ClassNotFoundException {
-        identity = connectionManager.getDto();
+        ClientDto dto = connectionManager.getDto();
+        try {
+            if (!dataBase.getPlayer(dto.getUsername()).getString("password").equals(dto.getPassword())) {
+                connectionManager.close();
+                connectionManager.sendDto(new LoginResponseDto(false));
+            }
+        } catch (SQLException e) {
+            connectionManager.close();
+            connectionManager.sendDto(new LoginResponseDto(false));
+        }
+        identity = dto;
+        connectionManager.sendDto(new LoginResponseDto(true));
+    }
+
+    private void registerIdentity() throws IOException, ClassNotFoundException {
+        ClientDto dto = connectionManager.getDto();
+        try {
+            if (dataBase.getPlayer(dto.getUsername()).getString("username").equals(dto.getUsername())) {
+                connectionManager.close();
+                connectionManager.sendDto(new RegisterResponseDto(false));
+            } else {
+                dataBase.addPlayer(dto.getUsername(), dto.getPassword());
+                connectionManager.sendDto(new RegisterResponseDto(true));
+            }
+        } catch (SQLException e) {
+            connectionManager.close();
+            connectionManager.sendDto(new RegisterResponseDto(false));
+        }
+        identity = dto;
     }
 
     private ActionDto getActionDto() throws IOException, ClassNotFoundException {

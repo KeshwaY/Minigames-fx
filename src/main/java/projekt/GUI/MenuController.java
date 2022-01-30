@@ -23,7 +23,7 @@ public class MenuController{
     private Button exit;
 
     public void play(ActionEvent actionEvent) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/Play.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/Lobby.fxml"));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
