@@ -8,5 +8,6 @@ public enum ActionType {
     JOIN_LOBBY,
     CHANGE_DESCRIPTION,
     START_GAME,
+    DRAW,
     QUIT
 }

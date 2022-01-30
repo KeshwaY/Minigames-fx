@@ -49,7 +49,7 @@ public class LobbyManagerImpl implements LobbyManager {
             );
             lobbies.put(ids, lobby);
             ids++;
-            executorService.submit(new FutureLobby(lobby));
+            executorService.submit(new FutureLobby(lobby, dataBase));
             return lobby;
         } finally {
             createLock.unlock();

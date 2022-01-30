@@ -5,6 +5,7 @@ import projekt.server.ActionType;
 import projekt.server.client.abstraction.ConnectionManager;
 import projekt.server.dto.*;
 import projekt.server.game.GameType;
+import projekt.server.game.abstraction.Game;
 import projekt.server.game.abstraction.Lobby;
 
 import java.io.IOException;
@@ -25,10 +26,12 @@ public class Client implements Runnable {
 
     private final ConcurrentHashMap<Integer, Lobby> lobbies;
     private Lobby lobby;
+    private Game game;
 
     private ClientDto identity;
 
     private final DataBase dataBase;
+    private int clientId;
 
     public Client(
             ConnectionManager connectionManager,
@@ -73,6 +76,9 @@ public class Client implements Runnable {
                             break;
                         case JOIN_LOBBY:
                             Integer lobbyId = Integer.parseInt(connectionManager.getInput());
+                            if (lobbies.get(lobbyId).getCurrentSize() == lobbies.get(lobbyId).getMaxSize()) {
+                                break;
+                            }
                             lobby = joinLobbyFunction.apply(
                                     lobbyId,
                                     this
@@ -83,8 +89,20 @@ public class Client implements Runnable {
                     }
                 } else {
                     if (lobby.getOwner() == this) {
+                        if (game == null) {
+                            game = lobby.getGame();
+                        }
                         switch (actionDto.getActionType()) {
                             case START_GAME -> lobby.startGame();
+                            case DRAW -> {
+                                if (!lobby.isStart()) {
+                                    lobby.startGame();
+                                }
+                                while(!game.isPlaying()) {
+                                    Thread.onSpinWait();
+                                }
+                                game.draw();
+                            }
                             case CHANGE_DESCRIPTION -> {
                                 String newDescription = connectionManager.getInput();
                                 lobby.changeDescription(newDescription);
@@ -104,6 +122,7 @@ public class Client implements Runnable {
         try {
             ResultSet resultSet = dataBase.getPlayer(dto.getUsername());
             resultSet.next();
+            this.clientId = resultSet.getInt("ID");
             String password = resultSet.getString("password");
             if (!password.equals(dto.getPassword())) {
                 connectionManager.sendDto(new LoginResponseDto(false));
@@ -160,6 +179,15 @@ public class Client implements Runnable {
         return lobbiesDto;
     }
 
+    public void sendGameStatusDto(GameStatusDto gameStatusDto) throws IOException {
+        gameStatusDto.setPlayer(lobby.getOwner() == this ? 1 : 2);
+        connectionManager.sendDto(gameStatusDto);
+    }
+
+    public void close() throws IOException {
+        connectionManager.close();
+    }
+
     public boolean isRunning() {
         return isRunning;
     }
@@ -172,4 +200,11 @@ public class Client implements Runnable {
         return identity;
     }
 
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
 }

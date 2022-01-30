@@ -1,5 +1,6 @@
 package projekt.server.game;
 
+import projekt.database.DataBase;
 import projekt.server.dto.GameResult;
 
 import java.util.concurrent.Callable;
@@ -7,8 +8,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class FutureLobby extends FutureTask<GameResult> {
-    public FutureLobby(Callable<GameResult> callable) {
+
+    private final DataBase dataBase;
+
+    public FutureLobby(Callable<GameResult> callable, DataBase dataBase) {
         super(callable);
+        this.dataBase = dataBase;
     }
 
     @Override

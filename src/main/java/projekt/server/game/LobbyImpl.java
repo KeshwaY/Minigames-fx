@@ -5,6 +5,9 @@ import projekt.server.dto.GameResult;
 import projekt.server.game.abstraction.Game;
 import projekt.server.game.abstraction.Lobby;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
 public class LobbyImpl implements Lobby {
@@ -16,10 +19,12 @@ public class LobbyImpl implements Lobby {
     private GameType gameType;
     private String description;
 
-    private boolean start;
+    private volatile boolean start;
     private Game game;
 
-    private BiConsumer<Integer, Lobby> deleteLobbyFunction;
+    private final BiConsumer<Integer, Lobby> deleteLobbyFunction;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public LobbyImpl(int id, Client ownerPlayer, GameType gameType, String description, Game game, BiConsumer<Integer, Lobby> deleteLobbyFunction) {
         this.id = id;
@@ -73,9 +78,10 @@ public class LobbyImpl implements Lobby {
     @Override
     public GameResult call() throws Exception {
         while (!start) {
-            Thread.sleep(1000);
+            Thread.onSpinWait();
         }
-        return game.start();
+        Future<GameResult> gameResultFuture = executorService.submit(() -> game.start());
+        return gameResultFuture.get();
     }
 
     public int getId() {
@@ -118,6 +124,14 @@ public class LobbyImpl implements Lobby {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
     }
 
     public Game getGame() {

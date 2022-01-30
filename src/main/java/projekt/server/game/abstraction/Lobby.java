@@ -18,4 +18,6 @@ public interface Lobby extends Serializable, Callable<GameResult> {
     void changeDescription(String newDescription);
     void startGame();
     void delete();
+    boolean isStart();
+    Game getGame();
 }

@@ -74,6 +74,24 @@ public class Client {
         sendActionDto(ActionType.CREATE_LOBBY);
     }
 
+    public void draw() throws IOException {
+        sendActionDto(ActionType.DRAW);
+    }
+
+    public void startGame() throws IOException {
+        sendActionDto(ActionType.START_GAME);
+    }
+
+    public GameStatusDto getGameStatus() throws IOException {
+        try {
+            return (GameStatusDto) objectInputStream.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public void sendActionDto(ActionType actionType) throws IOException {
         ActionDto actionDto = new ActionDto();
         actionDto.setActionType(actionType);
