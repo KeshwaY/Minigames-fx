@@ -50,11 +50,20 @@ public class CoinFlipController {
                     }
                     if (gameStatusDto.isFinished()) {
                         isFinished = true;
-                        if(gameStatusDto.getFirstPlayerScore() == 3){
-                            Platform.runLater(() -> winner.setText("Owner wins!"));
-                        }
-                        else {
-                            Platform.runLater(() -> winner.setText("Guest wins!"));
+                        if (gameStatusDto.getPlayer() == 1) {
+                            if(gameStatusDto.getFirstPlayerScore() == 3){
+                                Platform.runLater(() -> winner.setText("Owner wins!"));
+                            }
+                            else {
+                                Platform.runLater(() -> winner.setText("Guest wins!"));
+                            }
+                        } else {
+                            if(gameStatusDto.getSecondPlayerScore() == 3){
+                                Platform.runLater(() -> winner.setText("Guest wins!"));
+                            }
+                            else {
+                                Platform.runLater(() -> winner.setText("Owner wins!"));
+                            }
                         }
                     }
                 }

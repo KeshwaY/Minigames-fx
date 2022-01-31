@@ -82,9 +82,4 @@ public class DataBaseImpl implements DataBase{
         return execute(String.format("INSERT INTO results(playerID, gameID, winner) VALUES (%d, %d, %d)", playerId, gameId, winner));
     }
 
-    //    @Override
-//    public boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException{
-//        //TODO: need some validation/logic here for answer (choice) and set the winner
-//        return execute(String.format("INSERT INTO results(playerID, gameID, -----) VALUES ('%s', %s, %s)", playerId, gameId, //TODO: WHO IS THE WINNER?"));
-//    }
 }
