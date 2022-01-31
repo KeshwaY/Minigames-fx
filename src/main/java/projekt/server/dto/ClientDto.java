@@ -3,6 +3,7 @@ package projekt.server.dto;
 
 public class ClientDto extends AbstractDto {
 
+    private int id;
     private String username;
     private String password;
 
@@ -20,6 +21,14 @@ public class ClientDto extends AbstractDto {
     }
 
     public ClientDto() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {

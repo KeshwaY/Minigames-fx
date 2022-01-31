@@ -24,11 +24,10 @@ public class GameImpl implements Game {
     private Client secondPlayer;
     private LocalDateTime timeCreated;
 
-    private int drawCount = 0;
     private int firstPlayerScore;
     private int secondPlayerScore;
 
-    private boolean isPlaying;
+    private volatile boolean isPlaying;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -80,7 +79,6 @@ public class GameImpl implements Game {
         List<Client> clientList = new ArrayList<>();
         clientList.add(firstPlayer);
         clientList.add(secondPlayer);
-        drawCount++;
         Collections.shuffle(clientList, new Random());
         if (clientList.get(0) == firstPlayer) {
             firstPlayerScore++;
@@ -90,7 +88,7 @@ public class GameImpl implements Game {
         gameStatusDto.setFinished(false);
         gameStatusDto.setFirstPlayerScore(firstPlayerScore);
         gameStatusDto.setSecondPlayerScore(secondPlayerScore);
-        if (drawCount == 3) {
+        if (firstPlayerScore == 3 || secondPlayerScore == 3) {
             gameStatusDto.setFinished(true);
             isPlaying = false;
         }
@@ -106,29 +104,30 @@ public class GameImpl implements Game {
     @Override
     public GameResult start() {
         GameResult gameResult = new GameResult();
-        this.isPlaying = true;
+        isPlaying = true;
         Future<Boolean> task = executorService.submit(() -> {
-            while (this.isPlaying) {
+            while (isPlaying) {
                 Thread.onSpinWait();
             }
+            System.out.println(isPlaying);
+            System.out.println("test");
             return true;
         });
         try {
             boolean finished = task.get();
-            if (finished) {
-                try {
-                    firstPlayer.close();
-                    secondPlayer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                gameResult.setGameId(id);
-                gameResult.setFirstPlayer(firstPlayer.getIdentity());
-                gameResult.setSecondPlayer(secondPlayer.getIdentity());
-                gameResult.setOwnerAWinner(firstPlayerScore > secondPlayerScore);
-                gameResult.setTimeCreated(timeCreated);
-                gameResult.setTimeFinished(LocalDateTime.now());
+            System.out.println(finished);
+            try {
+                firstPlayer.close();
+                secondPlayer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            gameResult.setGameId(id);
+            gameResult.setFirstPlayer(firstPlayer.getIdentity());
+            gameResult.setSecondPlayer(secondPlayer.getIdentity());
+            gameResult.setOwnerAWinner(firstPlayerScore > secondPlayerScore);
+            gameResult.setTimeCreated(timeCreated);
+            gameResult.setTimeFinished(LocalDateTime.now());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }

@@ -122,17 +122,20 @@ public class Client implements Runnable {
         try {
             ResultSet resultSet = dataBase.getPlayer(dto.getUsername());
             resultSet.next();
-            this.clientId = resultSet.getInt("ID");
+            dto.setId(resultSet.getInt("ID"));
             String password = resultSet.getString("password");
             if (!password.equals(dto.getPassword())) {
                 connectionManager.sendDto(new LoginResponseDto(false));
                 connectionManager.close();
+                return;
             }
         } catch (SQLException e) {
             connectionManager.sendDto(new LoginResponseDto(false));
             connectionManager.close();
+            return;
         }
         identity = dto;
+        System.out.println(identity.getId());
         connectionManager.sendDto(new LoginResponseDto(true));
     }
 

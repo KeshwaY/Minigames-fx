@@ -1,6 +1,9 @@
 package projekt.database;
 
+import projekt.server.game.GameType;
+
 import java.sql.*;
+import java.time.LocalDateTime;
 
 public class DataBaseImpl implements DataBase{
 
@@ -60,7 +63,26 @@ public class DataBaseImpl implements DataBase{
         return execute(String.format("INSERT INTO players(username, password) VALUES ('%s', '%s')", name, password));
     }
 
-//    @Override
+    @Override
+    public int addGame(GameType gameType, LocalDateTime timeCreated) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(String.format("INSERT INTO games(gameType, created) VALUES ('%s', '%s')", gameType.toString(), timeCreated),
+                Statement.RETURN_GENERATED_KEYS);
+        statement.execute();
+
+        ResultSet rs = statement.getGeneratedKeys();
+        int generatedKey = 0;
+        if (rs.next()) {
+            generatedKey = rs.getInt(1);
+        }
+        return generatedKey;
+    }
+
+    @Override
+    public boolean addResult(int gameId, int playerId, int winner) throws SQLException {
+        return execute(String.format("INSERT INTO results(playerID, gameID, winner) VALUES (%d, %d, %d)", playerId, gameId, winner));
+    }
+
+    //    @Override
 //    public boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException{
 //        //TODO: need some validation/logic here for answer (choice) and set the winner
 //        return execute(String.format("INSERT INTO results(playerID, gameID, -----) VALUES ('%s', %s, %s)", playerId, gameId, //TODO: WHO IS THE WINNER?"));

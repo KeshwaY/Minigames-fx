@@ -81,7 +81,9 @@ public class LobbyImpl implements Lobby {
             Thread.onSpinWait();
         }
         Future<GameResult> gameResultFuture = executorService.submit(() -> game.start());
-        return gameResultFuture.get();
+        GameResult gameResult = gameResultFuture.get();
+        deleteLobbyFunction.accept(id, this);
+        return gameResult;
     }
 
     public int getId() {
