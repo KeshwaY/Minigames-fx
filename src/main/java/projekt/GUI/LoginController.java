@@ -46,7 +46,14 @@ public class LoginController {
         System.out.println(name);
         LoginResponseDto loginResponseDto = MainFX.client.login(name, pwd);
         System.out.println(loginResponseDto.getSuccess());
-        if(!loginResponseDto.getSuccess()) notValid.setText("Incorrect username or password!");
+        if(!loginResponseDto.getSuccess()){
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
+                Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+                notValid.setText("Error");
+        }
         else {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Menu.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

@@ -14,12 +14,27 @@ public class CoinFlipController {
     @FXML
     public Label enemyPoints;
 
+    @FXML
+    public Label yourPoints;
+
+    @FXML
+    public Label winner;
+
     public void draw(ActionEvent actionEvent) throws IOException {
         MainFX.client.draw();
         GameStatusDto gameStatusDto = MainFX.client.getGameStatus();
-        System.out.println(gameStatusDto.getPlayer());
-        System.out.println(gameStatusDto.getFirstPlayerScore());
-        System.out.println(gameStatusDto.getSecondPlayerScore());
-        System.out.println(gameStatusDto.isFinished());
+
+        yourPoints.setText(gameStatusDto.getFirstPlayerScore()+"");
+        enemyPoints.setText(gameStatusDto.getSecondPlayerScore()+"");
+
+
+        if(gameStatusDto.isFinished()){
+
+            if(gameStatusDto.getFirstPlayerScore() == 3){
+                winner.setText("Owner wins!");
+            }
+            else winner.setText("Guest wins!");
+
+        }
     }
 }
