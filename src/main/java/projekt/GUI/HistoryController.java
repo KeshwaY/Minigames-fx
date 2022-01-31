@@ -71,11 +71,7 @@ public class HistoryController implements Initializable {
         tableView.getColumns().add(dateCol);
 
         getMatches().forEach(match ->{
-            match.setPointsPlayer2(2);
-            match.setPointsPlayer1(3);
-            match.setIdWinner();
             tableView.getItems().add(match);
-
         });
 
 
