@@ -1,10 +1,9 @@
 package projekt.database;
 
-import projekt.server.client.Client;
+import projekt.server.game.GameType;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class DataBaseImpl implements DataBase{
 
@@ -13,6 +12,7 @@ public class DataBaseImpl implements DataBase{
     public DataBaseImpl(String host, String user, String password) throws SQLException {
         this.connection = DriverManager.getConnection(host, user, password);
         createDatabase();
+        createTables();
     }
 
     private void createDatabase() throws SQLException {
@@ -27,18 +27,15 @@ public class DataBaseImpl implements DataBase{
     }
 
     private void createPlayerTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS players ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " username VARCHAR(40) NOT NULL), password VARCHAR(40) NOT NULL");
+        execute("CREATE TABLE IF NOT EXISTS players ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, username VARCHAR(40) NOT NULL, password VARCHAR(40) NOT NULL)");
     }
 
     private void createResultTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS results ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " FOREIGN KEY (playerID) REFERENCES players(ID), FOREIGN KEY (gameID) REFERENCES games(ID), winner BOOLEAN)");
+        execute("CREATE TABLE IF NOT EXISTS results ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, playerID INTEGER NOT NULL, gameID INTEGER NOT NULL, FOREIGN KEY (playerID) REFERENCES players(ID), FOREIGN KEY (gameID) REFERENCES games(ID), winner BOOLEAN)");
     }
 
     private void createGameTable() throws SQLException {
-        execute("CREATE TABLE IF NOT EXISTS games ( ID INTEGER AUTO_INCREMENT PRIMARY KEY " +
-                " gameType VARCHAR(50) NOT NULL, created DATE)");
+        execute("CREATE TABLE IF NOT EXISTS games ( ID INTEGER AUTO_INCREMENT PRIMARY KEY, gameType VARCHAR(50) NOT NULL, created DATE)");
     }
 
     private boolean checkForValue(String sql) throws SQLException {
@@ -58,7 +55,7 @@ public class DataBaseImpl implements DataBase{
 
     @Override
     public ResultSet getPlayer(String username) throws SQLException {
-        return executeQuery("SELECT * FROM players WHERE username = " + username);
+        return executeQuery("SELECT * FROM players WHERE username = '" + username + "'");
     }
 
     @Override
@@ -66,7 +63,26 @@ public class DataBaseImpl implements DataBase{
         return execute(String.format("INSERT INTO players(username, password) VALUES ('%s', '%s')", name, password));
     }
 
-//    @Override
+    @Override
+    public int addGame(GameType gameType, LocalDateTime timeCreated) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(String.format("INSERT INTO games(gameType, created) VALUES ('%s', '%s')", gameType.toString(), timeCreated),
+                Statement.RETURN_GENERATED_KEYS);
+        statement.execute();
+
+        ResultSet rs = statement.getGeneratedKeys();
+        int generatedKey = 0;
+        if (rs.next()) {
+            generatedKey = rs.getInt(1);
+        }
+        return generatedKey;
+    }
+
+    @Override
+    public boolean addResult(int gameId, int playerId, int winner) throws SQLException {
+        return execute(String.format("INSERT INTO results(playerID, gameID, winner) VALUES (%d, %d, %d)", playerId, gameId, winner));
+    }
+
+    //    @Override
 //    public boolean savePlayerAnswer(String playerId, String gameId, String choiceId) throws SQLException{
 //        //TODO: need some validation/logic here for answer (choice) and set the winner
 //        return execute(String.format("INSERT INTO results(playerID, gameID, -----) VALUES ('%s', %s, %s)", playerId, gameId, //TODO: WHO IS THE WINNER?"));

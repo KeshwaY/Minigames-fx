@@ -3,13 +3,32 @@ package projekt.server.dto;
 
 public class ClientDto extends AbstractDto {
 
+    private int id;
     private String username;
+    private String password;
 
-    public ClientDto(String username) {
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ClientDto(String username, String password) {
         this.username = username;
+        this.password = password;
     }
 
     public ClientDto() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {

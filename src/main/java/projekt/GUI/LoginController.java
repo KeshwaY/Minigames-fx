@@ -10,11 +10,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import projekt.client.Client;
+import projekt.server.dto.LoginResponseDto;
 
 import java.io.IOException;
 
 
 public class LoginController {
+
+    public LoginController() {
+        try {
+            MainFX.client = new Client("localhost", 8080);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not connect to the server!");
+        }
+    }
+
     @FXML
     private TextField username;
 
@@ -25,12 +37,23 @@ public class LoginController {
     private Label notValid;
 
     public void login(ActionEvent actionEvent) throws IOException {
+
+
         String name = username.getText();
         String pwd = password.getText();
+        // after
         System.out.println(pwd);
         System.out.println(name);
-
-        if(!name.equals("user") && !pwd.equals("user")) notValid.setText("Incorrect username or password!");
+        LoginResponseDto loginResponseDto = MainFX.client.login(name, pwd);
+        System.out.println(loginResponseDto.getSuccess());
+        if(!loginResponseDto.getSuccess()){
+                Parent root = FXMLLoader.load(getClass().getResource("/GUI/Login.fxml"));
+                Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+                notValid.setText("Error");
+        }
         else {
             Parent root = FXMLLoader.load(getClass().getResource("/GUI/Menu.fxml"));
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

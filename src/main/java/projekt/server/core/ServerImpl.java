@@ -1,5 +1,6 @@
 package projekt.server.core;
 
+import projekt.database.DataBase;
 import projekt.server.client.Client;
 import projekt.server.client.abstraction.ConnectionManagerImpl;
 import projekt.server.core.abstraction.ClientThreadManager;
@@ -15,11 +16,13 @@ public class ServerImpl implements Server {
     private final ServerSocket serverSocket;
     private final ClientThreadManager clientThreadManager;
     private final LobbyManager lobbyManager;
+    private final DataBase dataBase;
 
-    public ServerImpl(int port, ClientThreadManager clientThreadManager, LobbyManager lobbyManager) throws IOException {
+    public ServerImpl(int port, ClientThreadManager clientThreadManager, LobbyManager lobbyManager, DataBase dataBase) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.lobbyManager = lobbyManager;
         this.clientThreadManager = clientThreadManager;
+        this.dataBase = dataBase;
     }
 
     public void start() {
@@ -32,7 +35,8 @@ public class ServerImpl implements Server {
                         new ConnectionManagerImpl(clientSocket),
                         lobbyManager::createLobby,
                         lobbyManager::joinPlayerToLobby,
-                        lobbyManager.getLobbies()
+                        lobbyManager.getLobbies(),
+                        dataBase
                 );
                 clientThreadManager.startClientThread(client);
             } catch (IOException e) {
