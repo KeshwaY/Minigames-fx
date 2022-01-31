@@ -21,9 +21,6 @@ import java.util.stream.IntStream;
 public class Main {
 
     public static void main(String[] args) {
-
-
-
         AtomicInteger posOfStartFlag = new AtomicInteger(-1);
         IntStream.range(0, args.length).boxed()
                 .forEach(i -> {

@@ -2,9 +2,9 @@ package projekt.server.dto;
 
 public class GameStatusDto extends AbstractDto {
 
-    private int player;
     private int firstPlayerScore;
     private int secondPlayerScore;
+    private int player;
     private boolean isFinished;
 
     public int getFirstPlayerScore() {

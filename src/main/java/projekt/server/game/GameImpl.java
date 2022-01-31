@@ -24,9 +24,9 @@ public class GameImpl implements Game {
     private Client secondPlayer;
     private LocalDateTime timeCreated;
 
-    private volatile int drawCount = 0;
-    private volatile int firstPlayerScore;
-    private volatile int secondPlayerScore;
+    private int drawCount = 0;
+    private int firstPlayerScore;
+    private int secondPlayerScore;
 
     private boolean isPlaying;
 
